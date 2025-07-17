@@ -244,6 +244,10 @@ class MainWindow(QMainWindow):
     def toggle_fragment_visibility(self, fragment_id: str, visible: bool):
         """Toggle fragment visibility"""
         self.fragment_manager.set_fragment_visibility(fragment_id, visible)
+        # Also update the control panel if this fragment is selected
+        if fragment_id == self.fragment_manager.get_selected_fragment_id():
+            selected_fragment = self.fragment_manager.get_fragment(fragment_id)
+            self.control_panel.set_selected_fragment(selected_fragment)
         
     def apply_transform(self, fragment_id: str, transform_type: str, value=None):
         """Apply transformation to fragment"""
@@ -266,6 +270,12 @@ class MainWindow(QMainWindow):
         elif transform_type == 'translate':
             dx, dy = value
             self.fragment_manager.translate_fragment(fragment_id, dx, dy)
+        elif transform_type == 'opacity_changed':
+            fragment.opacity = value
+            self.fragment_manager.fragments_changed.emit()
+        elif transform_type == 'visibility_changed':
+            fragment.visible = value
+            self.fragment_manager.fragments_changed.emit()
             
     def reset_fragment_transform(self, fragment_id: str):
         """Reset fragment transformation"""
@@ -382,6 +392,9 @@ class MainWindow(QMainWindow):
         
         # Update status bar
         self.fragment_count_label.setText(f"Fragments: {len(fragments)}")
+        
+        # Update toolbar
+        self.toolbar.set_fragment_count(len(fragments))
         
         # Update control panel if fragment is selected
         selected_id = self.fragment_manager.get_selected_fragment_id()

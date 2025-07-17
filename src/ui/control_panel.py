@@ -298,8 +298,10 @@ class ControlPanel(QWidget):
     def on_visibility_changed(self, state):
         """Handle visibility checkbox changes"""
         if self.current_fragment:
-            visible = state == Qt.CheckState.Checked.value
+            visible = state == Qt.CheckState.Checked
             self.current_fragment.visible = visible
+            # Emit signal to update canvas
+            self.transform_requested.emit(self.current_fragment.id, 'visibility_changed', visible)
             
     def on_opacity_changed(self, value):
         """Handle opacity slider changes"""
@@ -307,6 +309,8 @@ class ControlPanel(QWidget):
             opacity = value / 100.0
             self.current_fragment.opacity = opacity
             self.opacity_label.setText(f"{value}%")
+            # Emit signal to update canvas
+            self.transform_requested.emit(self.current_fragment.id, 'opacity_changed', opacity)
             
     def on_angle_changed(self):
         """Handle angle spinbox changes"""

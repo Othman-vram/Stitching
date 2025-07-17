@@ -164,7 +164,8 @@ class CanvasWidget(QWidget):
             
             # Also mark as dirty if visibility changed
             old_fragment = next((f for f in self.fragments if f.id == fragment.id), None)
-            if old_fragment and old_fragment.visible != fragment.visible:
+            if old_fragment and (old_fragment.visible != fragment.visible or 
+                               abs(old_fragment.opacity - fragment.opacity) > 0.01):
                 self.dirty_fragments.add(fragment.id)
                 if not fragment.visible:
                     # Remove pixmap for invisible fragments

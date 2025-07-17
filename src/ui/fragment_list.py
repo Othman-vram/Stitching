@@ -69,7 +69,8 @@ class FragmentListItem(QWidget):
         
     def on_visibility_changed(self, state):
         """Handle visibility checkbox changes"""
-        visible = state == Qt.CheckState.Checked.value
+        visible = state == Qt.CheckState.Checked
+        self.visibility_changed.emit(self.fragment.id, visible)
         
     def set_selected(self, selected: bool):
         """Set the selection state of this item"""
